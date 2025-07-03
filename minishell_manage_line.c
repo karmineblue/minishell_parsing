@@ -53,11 +53,19 @@ void	mini_check_line(t_data *data, char *s, t_index *in)
 {
 	if (in->m == 0
 		&& (s[in->i] == '|' && s[in->i + 1] == '|'))
-		ft_free(data->line);
+	{
+		free(data->line);
+		data->line = NULL;
+		data->error = 2;
+	}
 	else if (in->m == 0 && s[in->i + 1] != 0
 		&& ((s[in->i] == '<' && s[in->i + 1] == '<' && s[in->i + 2] == '<')
 			|| (s[in->i] == '>' && s[in->i + 1] == '>' && s[in->i + 2] == '>')))
-		ft_free(data->line);
+	{
+		free(data->line);
+		data->line = NULL;
+		data->error = 2;
+	}
 }
 
 void	mini_line_set(t_data *data)
@@ -71,11 +79,6 @@ void	mini_line_set(t_data *data)
 		&& (mini_isspace(data->line[in.i]) == 1 || data->line[in.i] == 0))
 		if (data->line[in.i++] == 0)
 			return (mini_invalid_line(data->line, NULL));
-	//if (data->story)
-	//	ft_free(data->story);
-	//data->story = ft_strdup(data->line);
-	//if (!data->story)
-	//	mini_liberate_all(data, "malloc failure", 1);
 	in.i = -1;
 	while (data->line && data->line[++in.i])
 	{

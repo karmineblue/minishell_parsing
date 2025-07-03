@@ -19,8 +19,8 @@ t_envlist	*mini_envlist_new(t_data *data, char **envp, int i)
 	new = malloc(sizeof(t_envlist));
 	if (!new)
 		mini_liberate_all(data, "malloc failure", 1);
-	new->at = ft_strdup(envp[i]);
-	if (!new->at)
+	new->str = ft_strdup(envp[i]);
+	if (!new->str)
 		mini_liberate_all(data, "malloc failure", 1);
 	new->next = NULL;
 	return (new);
@@ -55,7 +55,7 @@ void	mini_get_envp(t_data *data, char **envp)
 	{
 		data->start = mini_envlist_new(data, envp, i);
 		cur = data->start;
-		if (ft_strncmp(cur->at, "_=", 2) == 0)
+		if (ft_strncmp(cur->str, "_=", 2) == 0)
 			data->end = cur;
 	}
 	i = mini_get_envp_check(envp, i + 1);
@@ -63,7 +63,7 @@ void	mini_get_envp(t_data *data, char **envp)
 	{
 		cur->next = mini_envlist_new(data, envp, i);
 		cur = cur->next;
-		if (ft_strncmp(cur->at, "_=", 2) == 0)
+		if (ft_strncmp(cur->str, "_=", 2) == 0)
 			data->end = cur;
 		i = mini_get_envp_check(envp, i + 1);
 	}

@@ -23,9 +23,22 @@
 # include <readline/readline.h>
 # include "libft/libft.h"
 
-# define INTMAX 2147483647
-//# define INTMIN -2147483648
-//# define NOERROR 0
+# define ARG 0
+# define FONCTION 1
+# define PIPE 2
+# define INFILE 3
+# define HEREDOC 4
+# define OUTFILE 5
+# define APPEND 6
+# define REDINFILE 31
+# define REDHEREDOC 41
+# define REDOUTFILE 51
+# define REDAPPEND 61
+
+/*enum e_token_type
+{
+	HEREDOC,
+};*/
 
 typedef struct s_index
 {
@@ -45,7 +58,7 @@ typedef struct s_token
 typedef struct s_envlist
 {
 	struct s_envlist	*next;
-	char				*at;
+	char				*str;
 }	t_envlist;
 
 typedef struct s_data
@@ -58,7 +71,6 @@ typedef struct s_data
 	char				*line;
 	char				*ex;
 	char				*tmp;
-	int					ind;
 	int					len;
 	int					pipe;
 	int					error;
@@ -67,7 +79,7 @@ typedef struct s_data
 void		free2dstr(char **strs);
 void		ft_free(void *ptr);
 void		mini_check_line(t_data *data, char *s, t_index *in);
-void		mini_clean_line(t_data *data, char *str, int pt);
+void		mini_clean_line(t_data *data, t_token *cur, t_token *prev);
 void		mini_clean_quote(char *str, int i);
 int			mini_countwords(char *str);
 int			mini_empty_expanding(t_data *data, char *s, int i, int l);
@@ -88,6 +100,8 @@ int			mini_isspace(char c);
 void		mini_liberate_all(t_data *data, char *msg, int err);
 void		mini_line_sep(t_data *data);
 void		mini_line_set(t_data *data);
+void		mini_manage_expand_redir(t_data *data, t_token *cur, t_token *prev);
+void		mini_manage_expand_arg(t_data *data, t_token *cur, t_token *prev);
 void		mini_mode_switch(char *str, t_index *in, int type);
 int			mini_redircheck(char *str);
 void		mini_redirection_switch(char **str, t_index *in, int i);
@@ -95,10 +109,11 @@ void		mini_sizeword(t_data *data);
 void		mini_space_sep(t_data *data, char *str, t_index *in);
 void		mini_spacing_sep(t_data *data, t_index *in, int type);
 void		mini_split_line(t_data *data);
+void		mini_to_clean(t_data *data);
 int			mini_to_expand(t_data *data, char *s, int i);
 int			mini_token_assign(char *str, int pt);
-void        mini_token_cleaning(t_data *data);
+void		mini_token_cleaning(t_data *data);
 t_token		*mini_token_new(t_data *data, char **strs, int i);
-void        mini_tokenizer(t_data *data);
+void		mini_tokenizer(t_data *data);
 
 #endif

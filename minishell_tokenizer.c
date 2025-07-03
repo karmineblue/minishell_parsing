@@ -27,29 +27,29 @@ t_token	*mini_token_new(t_data *data, char **strs, int i)
 	return (new);
 }
 
-int	mini_token_assign(char *str, int pt)
+int	mini_token_assign(char *str, int prev_type)
 {
-	if (ft_strncmp(str, "|", 5) == 0)
-		return (2);
-	else if (ft_strncmp(str, "<", 5) == 0)
-		return (31);
-	else if (ft_strncmp(str, "<<", 5) == 0)
-		return (41);
-	else if (ft_strncmp(str, ">", 5) == 0)
-		return (51);
-	else if (ft_strncmp(str, ">>", 5) == 0)
-		return (61);
-	else if (pt == 31)
-		return (3);
-	else if (pt == 41)
-		return (4);
-	else if (pt == 51)
-		return (5);
-	else if (pt == 61)
-		return (6);
-	else if (pt == 2 || pt == 3 || pt == 4)
-		return (1);
-	return (0);
+	if (ft_strncmp(str, "|", 2) == 0)
+		return (PIPE);
+	else if (ft_strncmp(str, "<", 2) == 0)
+		return (REDINFILE);
+	else if (ft_strncmp(str, "<<", 3) == 0)
+		return (REDHEREDOC);
+	else if (ft_strncmp(str, ">", 2) == 0)
+		return (REDOUTFILE);
+	else if (ft_strncmp(str, ">>", 3) == 0)
+		return (REDAPPEND);
+	else if (prev_type == REDINFILE)
+		return (INFILE);
+	else if (prev_type == REDHEREDOC)
+		return (HEREDOC);
+	else if (prev_type == REDOUTFILE)
+		return (OUTFILE);
+	else if (prev_type == REDAPPEND)
+		return (APPEND);
+	//else if (prev_type == PIPE || prev_type == INFILE || prev_type == HEREDOC)
+	//	return (FONCTION);
+	return (ARG);
 }
 
 void	mini_token_cleaning(t_data *data)
@@ -73,12 +73,6 @@ void	mini_token_cleaning(t_data *data)
 			if (prev)
 				prev->next = cur;
 		}
-		/*if (cur->type > 4 && cur->next != NULL && cur->next->type == 0)
-		{
-			cur->next = cnext->next;
-			cnext->next = cur;
-			prev->next = cnext;
-		}*/
 		prev = cur;
 		if (cnext)
 			cur = cur->next;
@@ -94,10 +88,20 @@ void	mini_token_syntax(t_data *data)
 	cur = data->first;
 	while (cur)
 	{
+		if (!cur->next && (cur->type > 30 || cur->type == 2))
+		{
+			data->pipe = -1;
+			return ;
+		}
 		if (cur->next && cur->type > 30 && cur->next->type > 30)
-			mini_liberate_all(data, "unexpected token", 0);
+		{
+			data->pipe = -1 * cur->next->type;
+			data->error = 2;
+			return ;
+		}
 		cur = cur->next;
 	}
+	mini_token_cleaning(data);
 }
 
 void	mini_tokenizer(t_data *data)
@@ -120,5 +124,4 @@ void	mini_tokenizer(t_data *data)
 		prevtype = cur->type;
 	}
 	mini_token_syntax(data);
-	mini_token_cleaning(data);
 }

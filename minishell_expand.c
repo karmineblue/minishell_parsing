@@ -35,15 +35,15 @@ int	mini_to_expand(t_data *data, char *s, int i)
 	cur = data->start;
 	while (cur)
 	{
-		if (mini_exp_strcmp(cur->at, data->ex, data->len) == 0)
+		if (mini_exp_strcmp(cur->str, data->ex, data->len) == 0)
 		{
-			ft_free(data->ex);
-			i = mini_expanding(data, cur->at, s, i);
+			//ft_free(data->ex);
+			i = mini_expanding(data, cur->str, s, i);
 			return (i);
 		}
 		cur = cur->next;
 	}
-	ft_free(data->ex);
+	//ft_free(data->ex);
 	i = mini_empty_expanding(data, s, i, data->len);
 	return (i);
 }

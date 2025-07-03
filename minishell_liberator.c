@@ -45,8 +45,8 @@ void	mini_free_envlist(t_envlist *start)
 	while (clean)
 	{
 		ntc = clean->next;
-		if (clean->at)
-			ft_free(clean->at);
+		if (clean->str)
+			ft_free(clean->str);
 		ft_free(clean);
 		clean = ntc;
 	}
@@ -63,8 +63,12 @@ void	mini_free_token(t_token *first)
 	{
 		ntc = clean->next;
 		if (clean->str)
-			ft_free(clean->str);
-		ft_free(clean);
+		{
+			free(clean->str);
+			clean->str = NULL;
+		}
+		free(clean);
+		clean = NULL;
 		clean = ntc;
 	}
 	clean = NULL;
@@ -76,8 +80,6 @@ void	mini_liberate_all(t_data *data, char *msg, int err)
 		mini_free_token(data->first);
 	if (data->ltab && data->ltab != NULL)
 		free2dstr(data->ltab);
-	//if (data->story && data->story != NULL)
-	//	ft_free(data->story);
 	if (data->tmp && data->tmp != NULL)
 		ft_free(data->tmp);
 	if (data->start && data->start != NULL)

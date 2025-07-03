@@ -20,6 +20,7 @@ SRC =	minishell_cleanline.c \
 	minishell_split_line.c \
 	minishell_manage_line.c \
 	minishell_tokenizer.c \
+	minishell_token_expand.c \
 
 OBJ = $(SRC:.c=.o)
 

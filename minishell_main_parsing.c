@@ -12,39 +12,36 @@
 
 #include "minishell.h"
 
-void	mini_fonction_parse(t_data *data)
+void	mini_fonction_parse(t_token *cur)
 {
-	t_token	*cur;
-
-	cur = data->first;
-	if (cur->type == 1 && ft_strncmp(cur->str, "echo", 5) == 0)
-		printf("(buil-tin : exit)");
-	else if (cur->type == 1 && ft_strncmp(cur->str, "cd", 5) == 0)
-		printf("(buil-tin : exit)");
-	else if (cur->type == 1 && ft_strncmp(cur->str, "pwd", 5) == 0)
-		printf("(buil-tin : exit)");
-	else if (cur->type == 1 && ft_strncmp(cur->str, "export", 5) == 0)
-		printf("(buil-tin : exit)");
-	else if (cur->type == 1 && ft_strncmp(cur->str, "unset", 5) == 0)
-		printf("(buil-tin : exit)");
-	else if (cur->type == 1 && ft_strncmp(cur->str, "env", 5) == 0)
-		printf("(buil-tin : exit)");
-	else if (cur->type == 1 && ft_strncmp(cur->str, "exit", 5) == 0)
-		printf("(buil-tin : exit)");
-	else if (cur->type == 1)
-		printf("(execve : %s)", cur->str);
+	if (cur->type == FONCTION && ft_strncmp(cur->str, "echo", 5) == 0)
+		printf("buil-tin: ");
+	else if (cur->type == FONCTION && ft_strncmp(cur->str, "cd", 3) == 0)
+		printf("buil-tin: ");
+	else if (cur->type == FONCTION && ft_strncmp(cur->str, "pwd", 4) == 0)
+		printf("buil-tin: ");
+	else if (cur->type == FONCTION && ft_strncmp(cur->str, "export", 7) == 0)
+		printf("buil-tin: ");
+	else if (cur->type == FONCTION && ft_strncmp(cur->str, "unset", 6) == 0)
+		printf("buil-tin: ");
+	else if (cur->type == FONCTION && ft_strncmp(cur->str, "env", 4) == 0)
+		printf("buil-tin: ");
+	else if (cur->type == FONCTION && ft_strncmp(cur->str, "exit", 5) == 0)
+		printf("buil-tin: ");
+	else if (cur->type == FONCTION)
+		printf("execve: ");
 }
 
 void	mini_print_envp(t_data *data)
 {
 	t_envlist	*cur;
 
-	if (data->start && data->start->at != NULL)
+	if (data->start && data->start->str != NULL)
 	{
 		cur = data->start;
 		while (cur != NULL)
 		{
-			printf("%s\n", cur->at);
+			printf("%s\n", cur->str);
 			cur = cur->next;
 		}
 	}
@@ -54,10 +51,8 @@ int	main(int argc, char **argv, char **envp)
 {
 	t_data	data;
 	t_token	*cur;
-//	int		i;
 
 	(void)argv;
-//	(void)argc;
 	if (argc > 1)
 	{
 		write(2, "Error : no argument please\n", 27);
@@ -70,24 +65,28 @@ int	main(int argc, char **argv, char **envp)
 		data.line = readline("ask > ");
 		if (data.line && data.line != NULL)
 			mini_line_set(&data);
-		if (data.end && data.end->at != NULL)
-			printf("und = %s\n", data.end->at);
-		if (data.first)
+		if (data.end && data.end->str != NULL)
+			printf("und = %s\n", data.end->str);
+		if (data.first && data.first != NULL)
 		{
 			cur = data.first;
 			while (cur)
 			{
+				mini_fonction_parse(cur);
 				printf("%s (%d)\n", cur->str, cur->type);
 				cur = cur->next;
 			}
 			if (ft_strncmp(data.first->str, "exit", 5) == 0)
 			{
-                //mini_liberate_all(&data, NULL, 0);
-                mini_free_envlist(data.start);
+				mini_free_envlist(data.start);
 				mini_free_token(data.first);
 				exit (0);
-            }
-            mini_free_token(data.first);
+			}
+			else if (data.pipe == -1)
+				printf("minishell: syntax error near unexpected token 'newline' error: %d\n", data.error);
+			else if (data.pipe < -1)
+				printf("minishell: syntax error near unexpected token '%d' error: %d\n", data.pipe, data.error);
+			mini_free_token(data.first);
 			data.first = NULL;
 		}
 	}

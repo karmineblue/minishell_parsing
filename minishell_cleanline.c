@@ -67,24 +67,30 @@ void	mini_mode_switch(char *str, t_index *in, int type)
 	}
 }
 
-void	mini_clean_line(t_data *data, char *str, int pt)
+void	mini_clean_line(t_data *data, t_token *cur, t_token *prev)
 {
 	t_index	in;
 
+	(void)prev;
 	ft_bzero(&in, sizeof(t_index));
-	//data->sptr = &str;
-	//data->ind = i;
-	//mini_redirection_switch(data->ltab, &in, i);
-	while (str && str != NULL && str[in.i])
+	data->sptr = &cur->str;
+	while (cur && cur->str && cur->str != NULL && cur->str[in.i])
 	{
-		if (in.i >= 0 && in.m != 1 && in.h == 0 && str
-			&& str[in.i] == '$'
-			&& (ft_isalnum(str[in.i + 1]) == 1
-			|| str[in.i + 1] == '?'
-			|| str[in.i + 1] == '_')
-            && pt != 4)
-			in.i = mini_expand(data, str, in.i);
-		mini_mode_switch(str, &in, 1);
-		in.i++;
+		if (in.i >= 0 && in.m != 1 && cur->str
+			&& cur->str[in.i] == '$'
+			&& (ft_isalnum(cur->str[in.i + 1]) == 1
+				|| cur->str[in.i + 1] == '?'
+				|| cur->str[in.i + 1] == '_'))
+			in.i = mini_expand(data, cur->str, in.i);
+		if (cur->str[in.i])
+		{
+			mini_mode_switch(cur->str, &in, 1);
+			in.i++;
+		}
+		if (data->ex)
+		{
+			free(data->ex);
+			data->ex = NULL;
+		}
 	}
 }

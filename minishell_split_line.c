@@ -12,20 +12,21 @@
 
 #include "minishell.h"
 
-	void	mini_to_clean(t_data *data)
-	{
-		t_token	*cur;
-		int		pt;
+void	mini_to_clean(t_data *data)
+{
+	t_token	*cur;
+	t_token	*prev;
 
-		cur = data->first;
-		pt = 2;
-		while (cur)
-		{
-			mini_clean_line(data, cur->str, pt);
-			pt = cur->type;
-			cur = cur->next;
-		}
+	cur = data->first;
+	prev = NULL;
+	while (cur)
+	{
+		if (cur->type != HEREDOC)
+			mini_clean_line(data, cur, prev);
+		prev = cur;
+		cur = cur->next;
 	}
+}
 
 void	mini_split_line(t_data *data)
 {
@@ -116,13 +117,7 @@ void	mini_line_sep(t_data *data)
 	data->ltab[in.w] = NULL;
 	ft_free(data->line);
 	data->line = NULL;
-	//in.i = -1;
-	//while (data->ltab && data->ltab[++in.i])
-	//	mini_clean_line(data, in.i);
 	mini_tokenizer(data);
 	free2dstr(data->ltab);
-    //mini_to_clean(data);
-    //while (data->ltab[++in.i])
-	//	free(data->ltab[in.i]);
-	//free(data->ltab);
+	mini_to_clean(data);
 }

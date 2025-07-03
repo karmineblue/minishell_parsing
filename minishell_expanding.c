@@ -60,7 +60,7 @@ int	mini_empty_expanding(t_data *data, char *s, int i, int l)
 	new[j] = '\0';
 	ft_free(s);
 	*data->sptr = new;
-	return (i - 1);
+	return (i);
 }
 
 int	mini_expanding(t_data *data, char *cur, char *s, int i)
